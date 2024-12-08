@@ -1,5 +1,7 @@
 from django.db import models
 from mptt.models import MPTTModel,TreeForeignKey
+from .fields import OrderField
+from django.core.exceptions import ValidationError
 
 class ActiveQuerySet(models.QuerySet):
     def isactive(self):
@@ -43,5 +45,12 @@ class ProductLine(models.Model):
     is_active=models.BooleanField(default=True)
     
     product=models.ForeignKey(Product,on_delete=models.CASCADE,related_name="product_line")
-
+    order=OrderField(unique_for_field='product',blank=True)
     objects=ActiveQuerySet.as_manager()
+
+    def clean_fields(self, exclude):
+        super().clean_fields(exclude)
+        filter_pl=ProductLine.objects.filter(product=self.product)
+        for obj in filter_pl:
+            if obj.order == self.order and obj.id != self.id:
+                raise ValidationError("ValidationError")
