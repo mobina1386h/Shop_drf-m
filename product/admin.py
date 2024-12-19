@@ -7,7 +7,6 @@ class ProductLineInLines(admin.TabularInline):
 class ProductAdmin(admin.ModelAdmin):
     inlines=[ProductLineInLines]
     
-
 admin.site.register(Brand)
 admin.site.register(Category)
 #admin.site.register(Product)

@@ -50,7 +50,11 @@ class ProductLine(models.Model):
 
     def clean_fields(self, exclude):
         super().clean_fields(exclude)
+
         filter_pl=ProductLine.objects.filter(product=self.product)
         for obj in filter_pl:
             if obj.order == self.order and obj.id != self.id:
                 raise ValidationError("ValidationError")
+            
+    def __str__(self):
+        return self.sku
