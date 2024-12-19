@@ -27,3 +27,14 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model= Product
         fields=["brand_name","category_name","product_line","name","description","is_digital"]
+
+    def create(self, validated_data):
+        brand_data=validated_data.pop('brand')
+        category_data=validated_data.pop('category')
+        product_lines_date=validated_data.pop('product_line')
+        brand_obj,created=Brand.objects.get_or_create(name=brand_data["name"])
+        category_obj,created=Category.objects.get_or_create(name=category_data["name"])
+        product=Product.objects.create(brand=brand_obj,category=category_obj,**validated_data)
+        for pld in product_lines_date:
+            ProductLine.objects.create(product=product,**pld)
+        return Product
